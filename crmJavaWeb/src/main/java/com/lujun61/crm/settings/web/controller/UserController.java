@@ -37,6 +37,7 @@ public class UserController extends HttpServlet {
 
         // 获取访问资源的计算机IP
         String remoteAddr = req.getRemoteAddr();
+        
 
 
         // 代理的方式获取service对象

@@ -10,17 +10,161 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<%-- 注意标签的引入顺序！！！ --%>
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>  <%-- jquery框架 --%>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>  <%-- bootstrap框架（基于jquery） --%>
+	<%-- 日期组件（属于bootstrap的插件） --%>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+	<%-- 语言包组件（属于bootstrap的插件） --%>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
-		
-		
-		
+
+		// 市场活动>创建>
+		$("#addModalBtn").click(function () {
+			/**
+			 * 配置日历插件
+			 */
+			// 多处位置需要配置使用日历插件，推荐使用类选择器
+			$(".time").datetimepicker({
+				minView: "month",
+				language:  'zh-CN',
+				format: 'yyyy-mm-dd',
+				autoclose: true,
+				todayBtn: true,
+				pickerPosition: "bottom-left"
+			});
+
+
+			// 先向后台获取数据，目的是动态更新<select></select>标签
+			$.ajax({
+				url: "workbench/activity/getUserList.do",
+				type: "get",
+				dataType: "json",
+				success: function (data) {
+					var html = "";
+
+					//取得当前登录用户的id
+					//在js中使用el表达式，el表达式一定要套用在字符串中！！！
+					var id = "${sessionScope.user.id}";
+					$.each(data, function (i, val) {
+						if (val.id === id) {
+							//  所有者下拉列表框默认选中的应该为 【当前用户】
+							html += "<option value='" + val.id + "' selected>" + val.name + "</option>";
+						} else {
+							html+= "<option value='" + val.id + "'>" + val.name + "</option>";
+						}
+					});
+
+					$("#create-marketActivityOwner").html(html);
+				}
+			});
+
+
+			/*
+
+				操作模态窗口的方式：
+
+        		需要操作的模态窗口的jquery对象，调用modal方法，为该方法传递参数 show:打开模态窗口   hide：关闭模态窗口
+
+ 			*/
+			$("#createActivityModal").modal("show");
+
+		});
+
+
+		// 市场活动>创建>保存
+		$("#saveBtn").click(function () {
+
+			$.ajax({
+
+				url : "workbench/activity/save.do",
+				data : {
+
+					"owner" : $.trim($("#create-marketActivityOwner").val()),  //所有者
+					"name" : $.trim($("#create-marketActivityName").val()),    //名称
+					"startDate" : $.trim($("#create-startTime").val()),        //开始日期
+					"endDate" : $.trim($("#create-endTime").val()),            //结束日期
+					"cost" : $.trim($("#create-cost").val()),                  //成本
+					"description" : $.trim($("#create-describe").val())        //描述
+
+				},
+				type : "post",
+				dataType : "json",
+				success : function (data) {
+
+					/*
+
+						data
+							{"success":true/false}
+
+					 */
+					if(data.success){
+
+						//添加成功后
+						//刷新市场活动信息列表（局部刷新）
+						//pageList(1,2);
+
+						/*
+						*
+						* $("#activityPage").bs_pagination('getOption', 'currentPage'):
+						* 		操作后停留在当前页
+						*
+						* $("#activityPage").bs_pagination('getOption', 'rowsPerPage')
+						* 		操作后维持已经设置好的每页展现的记录数
+						*
+						* 这两个参数不需要我们进行任何的修改操作
+						* 	直接使用即可
+						*
+						*
+						*
+						* */
+
+						//做完添加操作后，应该回到第一页，维持每页展现的记录数
+
+						pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
+
+
+						//清空添加操作模态窗口中的数据
+						//提交表单
+						//$("#activityAddForm").submit();
+
+						/*
+
+							注意：
+								我们拿到了form表单的jquery对象
+								对于表单的jquery对象，提供了submit()方法让我们提交表单
+								但是表单的jquery对象，没有为我们提供reset()方法让我们重置表单（坑：idea为我们提示了有reset()方法）
+
+								虽然jquery对象没有为我们提供reset方法，但是原生js为我们提供了reset方法
+								所以我们要将jquery对象转换为原生dom对象
+
+								jquery对象转换为dom对象：
+									jquery对象[下标]
+
+								dom对象转换为jquery对象：
+									$(dom)
+
+
+						 */
+						$("#activityAddForm")[0].reset();
+
+						//关闭添加操作的模态窗口
+						$("#createActivityModal").modal("hide");
+					}else{
+						alert("添加市场活动失败");
+					}
+				}
+			});
+
+		});
+
+		$("#modifyModalBtn").click(function () {
+			$("#editActivityModal").modal("show");
+		});
 	});
 	
 </script>
@@ -45,9 +189,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -59,11 +201,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" class="form-control time" id="create-startTime" readonly>
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" class="form-control time" id="create-endTime" readonly>
 							</div>
 						</div>
                         <div class="form-group">
@@ -85,7 +227,10 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<%--
+						data-dismiss="modal"：表示关闭模态窗口
+					--%>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -109,9 +254,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+
 								</select>
 							</div>
                             <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
@@ -206,8 +349,29 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+					<%--
+
+						点击创建按钮，观察两个属性和属性值
+
+						data-toggle="modal"：
+							表示触发该按钮，将要打开一个模态窗口
+
+						data-target="#createActivityModal"：
+							表示要打开哪个模态窗口，通过#id的形式找到该窗口
+
+
+						现在我们是以属性和属性值的方式写在了button元素中，用来打开模态窗口
+						但是这样做是有问题的：
+							问题在于没有办法对按钮的功能进行扩充
+
+						所以未来的实际项目开发，对于触发模态窗口的操作，一定不要写死在元素当中，
+						应该由我们自己写js代码来操作
+
+					--%>
+					<%--  data-toggle="modal" data-target="#createActivityModal" --%>
+				  <button type="button" class="btn btn-primary" id="addModalBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+					<%--  data-toggle="modal" data-target="#editActivityModal" --%>
+				  <button type="button" class="btn btn-default" id="modifyModalBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 			</div>
