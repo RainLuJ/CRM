@@ -1,5 +1,7 @@
 package com.lujun61.crm.workbench.service.impl;
 
+import com.lujun61.crm.settings.dao.UserDao;
+import com.lujun61.crm.settings.domain.User;
 import com.lujun61.crm.utils.SqlSessionUtil;
 import com.lujun61.crm.vo.PaginationVO;
 import com.lujun61.crm.workbench.dao.ActivityDao;
@@ -7,13 +9,14 @@ import com.lujun61.crm.workbench.dao.ActivityRemarkDao;
 import com.lujun61.crm.workbench.domain.Activity;
 import com.lujun61.crm.workbench.service.ActivityService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityDao activityDao = SqlSessionUtil.getSqlSession().getMapper(ActivityDao.class);
     private final ActivityRemarkDao activityRemarkDao = SqlSessionUtil.getSqlSession().getMapper(ActivityRemarkDao.class);
-    //private final UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
+    private final UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
 
 
     @Override
@@ -33,6 +36,33 @@ public class ActivityServiceImpl implements ActivityService {
         return vo;
     }
 
+
+    @Override
+    public Activity detail(String id) {
+
+        return activityDao.detail(id);
+    }
+
+    @Override
+    public boolean edit(Activity a) {
+        boolean flag = activityDao.edit(a);
+
+        return flag;
+    }
+
+    @Override
+    public Map<String, Object> getUserListAndActivity(String id) {
+        Map<String, Object> result = new HashMap<>();
+
+        List<User> uList = userDao.getUserList();
+
+        Activity a = activityDao.getActivityListById(id);
+
+        result.put("uList", uList);
+        result.put("a", a);
+
+        return result;
+    }
 
     /**
      * @param ids 需要删除的市场活动记录的id

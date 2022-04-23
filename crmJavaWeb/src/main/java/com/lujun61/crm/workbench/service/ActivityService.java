@@ -6,6 +6,8 @@ import com.lujun61.crm.workbench.domain.Activity;
 
 import java.util.Map;
 
+
+
 /**
  * Author 北京动力节点
  */
@@ -15,6 +17,15 @@ public interface ActivityService {
     PaginationVO<Activity> pageList(Map<String, Object> map);
 
     boolean delete(String[] ids);
+
+    Map<String, Object> getUserListAndActivity(String id);
+
+    boolean edit(Activity a);
+
+    Activity detail(String id);
+
+
+
 
 
 

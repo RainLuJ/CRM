@@ -34,7 +34,84 @@ public class ActivityController extends HttpServlet {
             pageList(req, resp);
         } else if ("/workbench/activity/delete.do".equals(path)) {
             delete(req, resp);
+        } else if ("/workbench/activity/getUserListAndActivity.do".equals(path)) {
+            getUserListAndActivity(req, resp);
+        } else if ("/workbench/activity/update.do".equals(path)) {
+            update(req, resp);
+        } else if ("/workbench/activity/detail.do".equals(path)) {
+            detail(req, resp);
         }
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String id = request.getParameter("id");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        Activity a = as.detail(id);
+
+        // 优先添加至小作用域
+        request.setAttribute("a", a);
+
+        request.getRequestDispatcher("/workbench/activity/detail.jsp").forward(request, response);
+
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) {
+        String id = request.getParameter("id");
+        String owner = request.getParameter("owner");
+        String name = request.getParameter("name");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String cost = request.getParameter("cost");
+        String description = request.getParameter("description");
+        //创建时间：当前系统时间
+        String editTime = DateTimeUtil.getSysTime();
+        //创建人：当前登录用户
+        String editBy = ((User) request.getSession().getAttribute("user")).getName();
+
+        Activity a = new Activity();
+        a.setId(id);
+        a.setCost(cost);
+        a.setStartDate(startDate);
+        a.setOwner(owner);
+        a.setName(name);
+        a.setEndDate(endDate);
+        a.setDescription(description);
+        a.setCreateTime(editTime);
+        a.setCreateBy(editBy);
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        boolean flag = as.edit(a);
+
+        PrintJson.printJsonFlag(response, flag);
+    }
+
+    private void getUserListAndActivity(HttpServletRequest req, HttpServletResponse resp) {
+        String id = req.getParameter("id");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+         /*
+
+            总结：
+                controller调用service的方法，返回值应该是什么
+                你得想一想前端要什么，就要从service层取什么
+
+            前端需要的，管业务层去要
+            uList
+            a
+
+            以上两项信息，复用率不高，我们选择使用map打包这两项信息即可
+            map
+
+         */
+
+        Map<String, Object> list = as.getUserListAndActivity(id);
+
+        PrintJson.printJsonObj(resp, list);
     }
 
     private void delete(HttpServletRequest req, HttpServletResponse resp) {
