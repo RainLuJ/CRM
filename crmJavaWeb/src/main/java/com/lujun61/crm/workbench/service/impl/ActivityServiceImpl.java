@@ -7,6 +7,7 @@ import com.lujun61.crm.vo.PaginationVO;
 import com.lujun61.crm.workbench.dao.ActivityDao;
 import com.lujun61.crm.workbench.dao.ActivityRemarkDao;
 import com.lujun61.crm.workbench.domain.Activity;
+import com.lujun61.crm.workbench.domain.ActivityRemark;
 import com.lujun61.crm.workbench.service.ActivityService;
 
 import java.util.HashMap;
@@ -36,6 +37,24 @@ public class ActivityServiceImpl implements ActivityService {
         return vo;
     }
 
+
+    @Override
+    public List<ActivityRemark> getRemarkListByAid(String activityId) {
+        return activityRemarkDao.getRemarkListByAid(activityId);
+    }
+
+    @Override
+    public boolean deleteRemarkByArId(String id) {
+        int count = activityRemarkDao.deleteRemarkByArId(id);
+
+
+        boolean flag = false;
+        if (count == 1) {
+            flag = true;
+        }
+
+        return flag;
+    }
 
     @Override
     public Activity detail(String id) {

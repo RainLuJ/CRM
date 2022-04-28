@@ -3,7 +3,9 @@ package com.lujun61.crm.workbench.service;
 
 import com.lujun61.crm.vo.PaginationVO;
 import com.lujun61.crm.workbench.domain.Activity;
+import com.lujun61.crm.workbench.domain.ActivityRemark;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -23,6 +25,11 @@ public interface ActivityService {
     boolean edit(Activity a);
 
     Activity detail(String id);
+
+
+    List<ActivityRemark> getRemarkListByAid(String activityId);
+
+    boolean deleteRemarkByArId(String id);
 
 
 

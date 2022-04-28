@@ -5,6 +5,18 @@
 
 <mapper namespace="com.lujun61.crm.workbench.dao.ActivityRemarkDao">
 
+    <delete id="deleteRemarkByArId">
+        delete
+        from crm.tbl_activity_remark
+        where id=#{id}
+    </delete>
+
+    <select id="getRemarkListByAid" resultType="ActivityRemark">
+        select *
+        from crm.tbl_activity_remark
+        where activityId = #{activityId}
+    </select>
+
     <select id="getCountByAids" resultType="int">
         select count(*)
         from crm.tbl_activity_remark

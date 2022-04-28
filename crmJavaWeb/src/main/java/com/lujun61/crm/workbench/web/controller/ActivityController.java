@@ -9,6 +9,7 @@ import com.lujun61.crm.utils.ServiceFactory;
 import com.lujun61.crm.utils.UUIDUtil;
 import com.lujun61.crm.vo.PaginationVO;
 import com.lujun61.crm.workbench.domain.Activity;
+import com.lujun61.crm.workbench.domain.ActivityRemark;
 import com.lujun61.crm.workbench.service.ActivityService;
 import com.lujun61.crm.workbench.service.impl.ActivityServiceImpl;
 
@@ -40,7 +41,31 @@ public class ActivityController extends HttpServlet {
             update(req, resp);
         } else if ("/workbench/activity/detail.do".equals(path)) {
             detail(req, resp);
+        } else if ("/workbench/activity/getRemarkListByAid.do".equals(path)) {
+            getRemarkListByAid(req, resp);
+        } else if ("/workbench/activity/deleteRemark.do".equals(path)) {
+            deleteRemark(req, resp);
         }
+    }
+
+    private void deleteRemark(HttpServletRequest request, HttpServletResponse response) {
+        String id = request.getParameter("id");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        boolean flag = as.deleteRemarkByArId(id);
+
+        PrintJson.printJsonFlag(response, flag);
+    }
+
+    private void getRemarkListByAid(HttpServletRequest request, HttpServletResponse response) {
+        String activityId = request.getParameter("activityId");
+
+        ActivityService as = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+
+        List<ActivityRemark> asRemarkList = as.getRemarkListByAid(activityId);
+
+        PrintJson.printJsonObj(response, asRemarkList);
     }
 
     private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
