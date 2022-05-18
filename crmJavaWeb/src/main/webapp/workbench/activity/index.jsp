@@ -12,10 +12,10 @@
           rel="stylesheet"/>
 
     <%-- 注意标签的引入顺序！！！ --%>
-    <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <%-- jquery框架 --%>
-    <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <%-- bootstrap框架（基于jquery） --%>
+    <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
     <%-- 日期组件（属于bootstrap的插件） --%>
     <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
     <%-- 语言包组件（属于bootstrap的插件） --%>
@@ -345,6 +345,7 @@
 
                             //所有的值都填写好之后，打开修改操作的模态窗口
                             $("#editActivityModal").modal("show");
+
 
 
                             /* 	操作后停留在当前页
@@ -722,20 +723,7 @@
                 </tr>
                 </thead>
                 <tbody id="activityBody">
-                <%--<tr class="active">
-                    <td><input type="checkbox" /></td>
-                    <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a></td>
-                    <td>zhangsan</td>
-                    <td>2020-10-10</td>
-                    <td>2020-10-20</td>
-                </tr>
-                <tr class="active">
-                    <td><input type="checkbox" /></td>
-                    <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a></td>
-                    <td>zhangsan</td>
-                    <td>2020-10-10</td>
-                    <td>2020-10-20</td>
-                </tr>--%>
+
                 </tbody>
             </table>
         </div>
