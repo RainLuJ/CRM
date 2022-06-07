@@ -96,7 +96,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							详情：https://www.jb51.net/article/70916.htm
 							1 void(0)用于执行某些处理，但是不整体刷新页面的情况下,但是在需要对页面进行refresh的情况下，那就要仔细了。
 
-                            2 其实我们可以这样用<a href=”javascript:void(document.form.submit())”>，
+                            2 其实我们可以这样用<a href="javascript:void(document.form.submit())">，
                             这句话会进行一次submit操作。
                             那什么情 况下用void(0)比较多呢，无刷新，当然是Ajax了，看一下Ajax的web页面的话，
                             一般都会看到有很多的void(0)，：） ，所以在使用void(0)之前,最好先想一想,这个页面是否需要整体刷新
