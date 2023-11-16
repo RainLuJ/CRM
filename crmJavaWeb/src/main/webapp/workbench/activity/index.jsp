@@ -403,7 +403,6 @@
 
                 url: "workbench/activity/pageList.do",
                 data: {
-
                     "pageNo": pageNo,
                     "pageSize": pageSize,
                     "name": $.trim($("#search-name").val()),
@@ -467,7 +466,7 @@
                         showRowsInfo: true,
                         showRowsDefaultInfo: true,
 
-                        //该回调函数时在，点击分页组件的时候触发的
+                        //该回调函数是在，点击分页组件的时候触发的。既然点击一次触发一次，就不会产生递归。
                         onChangePage: function (event, data) {
                             pageList(data.currentPage, data.rowsPerPage);
                         }

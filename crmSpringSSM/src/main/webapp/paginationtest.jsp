@@ -20,7 +20,7 @@
     <script type="text/javascript">
         $(function() {
 
-            $("#demo_pag1").bs_pagination({
+            $("#demo_page").bs_pagination({
                 currentPage:1,//当前页号,相当于pageNo
 
                 rowsPerPage:10,//每页显示条数,相当于pageSize
@@ -39,6 +39,7 @@
                     //js代码
                     alert(pageObj.currentPage);
                     alert(pageObj.rowsPerPage);
+                    this.rowsPerPage = pageObj.rowsPerPage;
                 }
             });
 
@@ -48,6 +49,6 @@
 <body>
 <!--  Just create a div and give it an ID -->
 
-<div id="demo_pag1"></div>
+<div id="demo_page"></div>
 </body>
 </html>
